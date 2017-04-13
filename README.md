@@ -1,9 +1,3 @@
-/**
- * Overflow aware uint math functions.
- *
- * Inspired by https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
- */
-
 pragma solidity ^0.4.8;
 
 contract Owned {
