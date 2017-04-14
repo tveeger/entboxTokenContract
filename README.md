@@ -1,0 +1,2 @@
+entbox token contract
+
