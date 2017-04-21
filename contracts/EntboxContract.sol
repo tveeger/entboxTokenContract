@@ -45,7 +45,7 @@ function safeToAdd(uint a, uint b) internal returns (bool) {
 return (a + b >= a);
 } }
 
-contract ChainsOfFreedomToken is StandardToken, Owned { string public constant name = "Chains Of Freedom"; string public constant symbol = "DT"; uint public constant decimals = 0; string public constant version = "0.1"; uint256 public totalSupply = 0; uint256 public credit = 0;
+contract ChainsOfFreedomToken is StandardToken, Owned { string public constant name = "Chains Of Freedom"; string public constant symbol = "DT"; uint public constant decimals = 0; string public constant version = "0.1"; uint256 public initialSupply = 0; uint256 public totalSupply = 0; uint256 public credit = 0;
 
 mapping( address => uint ) _balances;
 
