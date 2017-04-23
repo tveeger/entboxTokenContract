@@ -1,20 +1,17 @@
 entbox token contract
 
-# Tjeerd comment
+# comment
+TestRPC:
+$ testrpc -p 8444
 
-nvm use 7.2.1
-testrpc of $ testrpc -u 0 -u 1 of testrpc -p 8444
-
-cd react/truffle-box3-erc20
-nvm use 7.2.1
-truffle compile
-truffle migrate
-npm run start
-
-https://github.com/danawoodman/react-fontawesome
+$ cd entboxTokenContract
+First time use: $ npm install
+$ truffle compile
+$ truffle migrate
+$ npm run start
 
 Geth:
-geth --rpc --networkid=3 --rpccorsdomain="http://localhost:3000" --datadir ~/.ethereum/ropsten --verbosity 3 --maxpeers 3 --rpcport 8444 --shh console
+$ geth --rpc --networkid=3 --rpccorsdomain="http://localhost:3000" --datadir ~/.ethereum/ropsten --verbosity 3 --maxpeers 3 --rpcport 8444 --shh console
 
 
 # Truffle Box (React)
