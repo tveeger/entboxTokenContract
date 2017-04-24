@@ -1,22 +1,7 @@
-entbox token contract
+## entbox token contract
 
-# comment
+# Entbox
 TestRPC:
-$ testrpc -p 8444
-
-$ cd entboxTokenContract
-First time use: $ npm install
-$ truffle compile
-$ truffle migrate
-$ npm run start
-
-Geth:
-$ geth --rpc --networkid=3 --rpccorsdomain="http://localhost:3000" --datadir ~/.ethereum/ropsten --verbosity 3 --maxpeers 3 --rpcport 8444 --shh console
-
-
-# Truffle Box (React)
-
-This box comes with everything you need to start using smart contracts from a react app. This is as barebones as it gets, so nothing stands in your way.
 
 ## Installation
 
@@ -61,16 +46,7 @@ This box comes with everything you need to start using smart contracts from a re
     npm run build
     ```
 
-## FAQ
+$ testrpc -p 8444
 
-* __Why is there both a truffle.js file and a truffle-config.js file?__
-
-    Truffle requires the truffle.js file be named truffle-config on Windows machines. Feel free to delete the file that doesn't correspond to your platform.
-
-* __Where is my production build?__
-
-    The production build will be in the build_webpack folder. This is because Truffle outputs contract compilations to the build folder.
-
-* __Where can I find more documentation?__
-
-    All truffle boxes are a marriage of [Truffle](http://truffleframework.com/) and a React setup created with [create-react-app](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md). Either one would be a great place to start!
+Geth:
+$ geth --rpc --networkid=3 --rpccorsdomain="http://localhost:3000" --datadir ~/.ethereum/ropsten --verbosity 3 --maxpeers 3 --rpcport 8444 --shh console
