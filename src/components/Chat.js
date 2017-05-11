@@ -42,7 +42,8 @@ class Chat extends Component {
 			shhIdentityText: 'First create an identity......',
 			appName: 'Entbox',
 			postText: '',
-			hideNewIdentityButton: false
+			hideNewIdentityButton: false,
+			hideSubmitPostButton: true
 		};
 		this.handleInputChangeVal = this.handleInputChangeVal.bind(this);
 		this.handleNewIdentity = this.handleNewIdentity.bind(this);
@@ -58,6 +59,7 @@ class Chat extends Component {
 				self.setState({shhIdentity: myIdentity});
 				self.setState({shhIdentityText: 'A new identity is created. Now send your message'});
 				self.setState({hideNewIdentityButton: true});
+				self.setState({hideSubmitPostButton: false});
 				
 				console.log('new id ' + myIdentity);
 			} else {
@@ -114,7 +116,7 @@ class Chat extends Component {
 						</div>
 						<div className="">
 							<TextField onChange={this.handleInputChangeVal} floatingLabelText="Your text here" />
-							<RaisedButton type="submit" onClick={this.handleSubmit} label="Submit" primary={true} style={styles.button} />
+							<RaisedButton type="submit" onClick={this.handleSubmit} label="Submit" primary={true} style={styles.button} disabled={this.state.hideSubmitPostButton} />
 						</div>
 						<Messages/>
 					</Paper>
