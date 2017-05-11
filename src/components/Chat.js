@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
+import {List, ListItem} from 'material-ui/List';
 import EntboxContract from '../../build/contracts/EntboxContract.json';
-import Web3 from 'web3'
-
+import Web3 from 'web3';
+import Messages from './Messages.js';
+//import watchtest from '../watchtest.js'
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
+
+const provider = new Web3.providers.HttpProvider('http://localhost:8444');
+const contract = require('truffle-contract')
+const entboxContract = contract(EntboxContract)
+entboxContract.setProvider(provider)
+const web3 = new Web3(provider);
+const shh = web3.shh;
+
 
 const styles = {
 	button: {
@@ -14,74 +24,82 @@ const styles = {
 		width: '97%',
 		textAlign: 'left',
 		display: 'inline-block',
+	},
+	showIdentityButton: {
+		display: 'none',
+	},
+	hidden: {
+		display: 'none',
 	}
 };
 
 class Chat extends Component {
-		constructor(props) {
+	constructor(props) {
 		super(props);
 
 		this.state = {
-			value: '',
-			userAddress: '',
-			idText: ''
-	};
+			shhIdentity: '',
+			shhIdentityText: 'First create an identity......',
+			appName: 'Entbox',
+			postText: '',
+			hideNewIdentityButton: false
+		};
 		this.handleInputChangeVal = this.handleInputChangeVal.bind(this);
+		this.handleNewIdentity = this.handleNewIdentity.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
+	handleNewIdentity() {
+		self = this;
+		var myIdentity = self.state.shhIdentity;
+		shh.hasIdentity(myIdentity, function(error, result) {
+			if (result == false || result != '') {
+				var myIdentity = shh.newIdentity();
+				self.setState({shhIdentity: myIdentity});
+				self.setState({shhIdentityText: 'A new identity is created. Now send your message'});
+				self.setState({hideNewIdentityButton: true});
+				
+				console.log('new id ' + myIdentity);
+			} else {
+				self.setState({shhIdentityText: 'Identity already created'});
+				console.log('My old and current id ' + self.state.shhIdentity + ', result: ' + result);
+			}
+		});
+		
+	}
+
 	handleInputChangeVal(event) {
-		this.setState({value: event.target.value});
+		this.setState({postText: event.target.value});
 	}
 
 	handleSubmit(e) {
 		e.preventDefault();
-		var euros = this.state.value;
 		var self = this
-		const provider = new Web3.providers.HttpProvider('http://localhost:8444')
-		const contract = require('truffle-contract')
-		const simpleStorage = contract(EntboxContract)
-		simpleStorage.setProvider(provider)
-		const web3RPC = new Web3(provider)
-
-		web3RPC.eth.getAccounts(function(error, accounts) {
-			self.setState({userAddress: accounts[0]});
-			var coinbase = self.userAddress;
-			var hash = web3RPC.sha3(coinbase + euros);
-			self.setState({idText: hash});
+		//self.setState({postText: postText});
+		
+		var message = {
+		  "from": self.state.shhIdentity,
+		  "topics": [web3.fromAscii(self.state.appName)],
+		  "payload": web3.fromAscii('{"message": "' + self.state.postText + '"}'),
+		  "ttl": 100,
+		  "priority": 1000
+		};
+		shh.post(message, function(error, result) {
+			if (!error) {
+				//console.log('posted a message: ' + JSON.stringify(message));
+			}
 		});
 	}
 	
 	componentWillMount() {
-		var self = this
-		const provider = new Web3.providers.HttpProvider('http://localhost:8444')
-		const contract = require('truffle-contract')
-		const simpleStorage = contract(EntboxContract)
-		simpleStorage.setProvider(provider)
-		const web3 = new Web3(provider)
-		
-/*		const shh = web3.shh
-		var appName = "EntBox";
-		var myName = "Donna Lee";
-		var myIdentity = shh.newIdentity();
-		shh.post({
-		  "from": myIdentity,
-		  "topics": [ web3.fromAscii(appName) ],
-		  "payload": [ web3.fromAscii(myName), web3.fromAscii("What is your name?") ],
-		  "ttl": 100,
-		  "priority": 1000
-		});
-
-		var replyWatch = shh.watch({
-		  "topics": [ web3.fromAscii(appName), myIdentity ],
-		  "to": myIdentity
-		});
-
-		replyWatch.arrived(function(m)
-		{
-			console.log("Reply from " + web3.toAscii(m.payload) + " whose address is " + m.from);
-		});
-*/		
+		var self = this;
+		if (shh) {
+			var myIdentity = this.state.shhIdentity;
+			var appName = self.state.appName;
+			self.setState({appName: appName});
+			//var topic = web3.fromAscii(appName);
+			var topic = web3.fromAscii(self.state.postText);
+		}
 	}
 
 	render() {
@@ -90,9 +108,15 @@ class Chat extends Component {
 				<div>
 					<Paper style={styles.paper} zDepth={1} >
 						<h2>Chat</h2>
-						<p>Connect to the world</p>
-						<TextField onChange={this.handleInputChangeVal} floatingLabelText="Your text here" /><br/>
-						<RaisedButton type="submit" onClick={this.handleSubmit} label="Submit" primary={true} style={styles.button} />
+						<div style={styles.showIdentityButton5}>
+							<RaisedButton type="button" onClick={this.handleNewIdentity} label="New Identity" primary={true} style={styles.button} disabled={this.state.hideNewIdentityButton} />
+							<div>{this.state.shhIdentityText}</div>
+						</div>
+						<div className="">
+							<TextField onChange={this.handleInputChangeVal} floatingLabelText="Your text here" />
+							<RaisedButton type="submit" onClick={this.handleSubmit} label="Submit" primary={true} style={styles.button} />
+						</div>
+						<Messages/>
 					</Paper>
 				</div>
 			</form>
