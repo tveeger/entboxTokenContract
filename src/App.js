@@ -58,11 +58,7 @@ class App extends Component {
 			creditTokens: 100,
 			creditTokensLeft: 0
 		}
-
 		this.handleClick = this.handleClick.bind(this);
-		//this.handleChange = this.handleChange.bind(this);
-		//this.handleSubmit = this.handleSubmit.bind(this);
-
 	}
 
 	onActive(tab) {
@@ -80,20 +76,32 @@ class App extends Component {
 
 	componentWillMount() {
 		var self = this
-		injectTapEventPlugin(); //Material-UI
-		const provider = new Web3.providers.HttpProvider('http://localhost:8444')
 		const contract = require('truffle-contract')
-		const myToken = contract(EntboxContract) //contract ABI(Token)
-		myToken.setProvider(provider)
-		const web3RPC = new Web3(provider)
-		//var account = web3RPC.personal.listAccounts[0];
-		//web3RPC.personal.unlockAccount(account,"password",15000); // unlock for a long time
+		var myToken = contract(EntboxContract) //contract ABI(Token);
+		var web3;
+
+		injectTapEventPlugin(); //Material-UI
+
+		if (typeof web3 !== 'undefined') {
+			//const provider = new Web3.providers.HttpProvider('http://localhost:8444')
+			web3 = new Web3(web3.currentProvider);
+			myToken.setProvider(web3);
+		} else {
+			console.log('No web3? You should consider trying MetaMask!')
+			//const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8444"));
+			const provider = new Web3.providers.HttpProvider('http://localhost:8444');
+			myToken.setProvider(provider);
+			web3 = new Web3(provider);
+		}
+		
+		//var account = web3.personal.listAccounts[0];
+		//web3.personal.unlockAccount(account,"password",15000); // unlock for a long time
 
 		var myTokenInstance
 		var tokenAddress
 
 		// Get accounts.
-		web3RPC.eth.getAccounts(function(error, accounts) {
+		web3.eth.getAccounts(function(error, accounts) {
 			self.setState({userAddress: accounts[0]});
 			myToken.deployed().then(function(instance) {
 			myTokenInstance = instance
@@ -101,9 +109,9 @@ class App extends Component {
 			}).then(function(result) {
 				tokenAddress = myTokenInstance.address;
 				self.setState({address: tokenAddress});
-				var myUserBalance = web3RPC.eth.getBalance(accounts[0]);
-				self.setState({userBalance: web3RPC.fromWei(myUserBalance.toNumber(), "ether")});
-				//let MyContract = web3RPC.eth.contract(JSON.parse(abi));
+				var myUserBalance = web3.eth.getBalance(accounts[0]);
+				self.setState({userBalance: web3.fromWei(myUserBalance.toNumber(), "ether")});
+				//let MyContract = web3.eth.contract(JSON.parse(abi));
 				//console.log('test ' + MyContract);
 			})
 		});
@@ -118,7 +126,7 @@ class App extends Component {
 				</MuiThemeProvider>
 			</header>
 
-			<main className="container">
+			<main className="">
 			  <div>
 				<MuiThemeProvider>
 					<Paper style={styles.paper} zDepth={3} >
