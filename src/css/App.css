@@ -56,3 +56,8 @@ code {
   height: 16px;
   margin-right: 10px;
 }
+
+.appbarTitle {
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  font-size: 160%;
+}

@@ -4,7 +4,6 @@ import Web3 from 'web3'
 
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import Paper from 'material-ui/Paper';
 
 const styles = {
 	button: {
@@ -14,6 +13,7 @@ const styles = {
 		width: '97%',
 		textAlign: 'left',
 		display: 'inline-block',
+		padding: 15,
 	}
 };
 
@@ -50,7 +50,7 @@ class CreateToken extends Component {
 
 	componentWillMount() {
 		var self = this
-		const provider = new Web3.providers.HttpProvider('http://localhost:8444')
+		const provider = new Web3.providers.HttpProvider('http://localhost:8545')
 		const contract = require('truffle-contract')
 		const simpleStorage = contract(EntboxContract)
 		simpleStorage.setProvider(provider)
@@ -87,12 +87,10 @@ class CreateToken extends Component {
 		return (
 			<form onSubmit={this.handleSubmit}>
 				<div>
-					<Paper style={styles.paper} zDepth={1} >
 					<h2>Create new tokens</h2>
 					<p>You have enough funds to buy {this.state.creditTokensLeft} DETs. </p>
 					<TextField defaultValue="" onChange={this.handleInputChangeCreateTokenAmount} floatingLabelText="Amount of tokens" /><br/>
 					<RaisedButton type="submit" onClick={this.handleSubmit} label="Click me" primary={true} style={styles.button} />
-					</Paper>					
 				</div>
 			</form>
 		);

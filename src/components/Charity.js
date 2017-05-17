@@ -9,17 +9,18 @@ const styles = {
 	}
 };
 
-class About extends React.Component {
+class Charity extends React.Component {
 	render() {
 		return (
 			<div style={styles.paper_content}>
-				<h2>About...</h2>
+				<h2>Charities</h2>
 				<p>
-					Chains of Freedom is a foundation based in The Netherlands...
+					If you are an charity executive and like to add your organization to our list, 
+					please mail us at info@chainsoffreedom.org.
 				</p>
 			</div>
 		)
 	}
 }
 
-export default About;
+export default Charity

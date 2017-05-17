@@ -3,12 +3,15 @@ import {List, ListItem} from 'material-ui/List';
 import EntboxContract from '../../build/contracts/EntboxContract.json';
 import Web3 from 'web3';
 import Messages from './Messages.js';
-//import watchtest from '../watchtest.js'
+
+import Identicon from 'react-identity-icon';
+
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
+import Divider from 'material-ui/Divider';
 
-const provider = new Web3.providers.HttpProvider('http://localhost:8444');
+const provider = new Web3.providers.HttpProvider('http://localhost:8545');
 const contract = require('truffle-contract')
 const entboxContract = contract(EntboxContract)
 entboxContract.setProvider(provider)
@@ -60,14 +63,15 @@ class Chat extends Component {
 				self.setState({shhIdentityText: 'A new identity is created. Now send your message'});
 				self.setState({hideNewIdentityButton: true});
 				self.setState({hideSubmitPostButton: false});
-				
-				console.log('new id ' + myIdentity);
+
+				styles.showIdentityButton.display = 'inline-block';
+
+				console.log('new id ' + myIdentity + ', ' + self.props);
 			} else {
 				self.setState({shhIdentityText: 'Identity already created'});
 				console.log('My old and current id ' + self.state.shhIdentity + ', result: ' + result);
 			}
 		});
-		
 	}
 
 	handleInputChangeVal(event) {
@@ -82,7 +86,7 @@ class Chat extends Component {
 		var message = {
 		  "from": self.state.shhIdentity,
 		  "topics": [web3.fromAscii(self.state.appName)],
-		  "payload": web3.fromAscii('{"message": "' + self.state.postText + '"}'),
+		  "payload": web3.fromAscii(self.state.postText),
 		  "ttl": 100,
 		  "priority": 1000
 		};
@@ -110,14 +114,18 @@ class Chat extends Component {
 				<div>
 					<Paper style={styles.paper} zDepth={1} >
 						<h2>Chat</h2>
-						<div style={styles.showIdentityButton5}>
+						<div>
 							<RaisedButton type="button" onClick={this.handleNewIdentity} label="New Identity" primary={true} style={styles.button} disabled={this.state.hideNewIdentityButton} />
-							<div>{this.state.shhIdentityText}</div>
+							{this.state.shhIdentityText}
+						</div>
+						<div style={styles.showIdentityButton}>
+							<Identicon hash={this.state.shhIdentity} size="40" />
 						</div>
 						<div className="">
 							<TextField onChange={this.handleInputChangeVal} floatingLabelText="Your text here" />
 							<RaisedButton type="submit" onClick={this.handleSubmit} label="Submit" primary={true} style={styles.button} disabled={this.state.hideSubmitPostButton} />
 						</div>
+						<Divider />
 						<Messages/>
 					</Paper>
 				</div>

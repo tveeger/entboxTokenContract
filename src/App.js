@@ -1,19 +1,24 @@
 import React, { Component } from 'react';
-import EntboxContract from '../build/contracts/EntboxContract.json';
-import injectTapEventPlugin from 'react-tap-event-plugin';
-import Web3 from 'web3';
 
-import CreateToken from './components/CreateToken.js';
-import BuyTokens from './components/BuyTokens.js';
-import Donate from './components/Donate.js';
-import Chat from './components/Chat.js';
+import Home from './components/Home.js';
 import Terms from './components/Terms.js';
 import About from './components/About.js';
-import Register from './components/Register.js';
+import Charity from './components/Charity.js';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import MyAppbar from './components/materialUI/MyAppbar';
 import MyBottomNavigation from './components/materialUI/MyBottomNavigation.js';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import Paper from 'material-ui/Paper';
+
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
+import DonutIcon from 'material-ui/svg-icons/navigation/donut-small';
+import LoyaltyIcon from 'material-ui/svg-icons/navigation/loyalty';
 
 import './css/font-awesome.css'
 import './css/oswald.css'
@@ -21,26 +26,13 @@ import './css/frente.css'
 import './css/open-sans.css'
 import './css/App.css'
 
-import {Tabs, Tab} from 'material-ui/Tabs'
-import Paper from 'material-ui/Paper';
-
 const styles = {
-  headline: {
-    fontSize: 14,
-    paddingTop: 6,
-    marginBottom: 2,
-    fontWeight: 400,
-    color: '#666',
-  	background: 'transparent true',
-  	border: 0
-  },
-  paper: {
-  	width: '100%',
-	margin: 4,
-	padding: 10,
-	textAlign: 'left',
-	display: 'inline-block',
-  	}
+	title: {
+		cursor: 'pointer',
+	},
+	verticon: {
+		color: '#dddddd'
+	}
 };
 
 class App extends Component {
@@ -48,73 +40,61 @@ class App extends Component {
 		super(props)
 
 		this.state = {
-			address: "0x123...",
-			userAddress: '0x123...',
-			userBalance: 0,
-			name: "MyToken",
-			symbol: "DET",
-			version: "0",
-			totalSupply: 0,
-			creditTokens: 100,
-			creditTokensLeft: 0
+			value: 3,
+			valueSingle: '1',
+			openMenu: false,
+			showHome: true,
+			showAbout: false,
+			showTerms: false,
+			showCharity: false
 		}
-		this.handleClick = this.handleClick.bind(this);
+		this.handleChange = (event, index, value) => this.setState({value});
+		this.handleChangeSingle = this.handleChangeSingle.bind(this);
+		this.handleHome = this.handleHome.bind(this);
+		this.handleAbout = this.handleAbout.bind(this);
+		this.handleTerms = this.handleTerms.bind(this);
+		this.handleCharity = this.handleCharity.bind(this);
 	}
 
-	onActive(tab) {
-		console.log('andere tab');
+	handleHome() {
+		this.setState({showHome: true});
+		this.setState({showAbout: false, showTerms: false, showCharity: false});
+		this.setState({valueSingle: '1'})
 	}
 
-	handleClick(e) {
-		e.preventDefault();
-		console.log('cliked something ' + this);
+	handleAbout() {
+		this.setState({showAbout: true});
+		this.setState({showHome: false, showTerms: false, showCharity: false});
+		this.setState({valueSingle: '2'})
 	}
 
-	handleActive(tab) {
-		//alert(`A tab with this route property ${tab.props['data-route']} was activated.`);
+	handleTerms() {
+		this.setState({showTerms: true});
+		this.setState({showHome: false, showAbout: false, showCharity: false});
+		this.setState({valueSingle: '3'})
+	}
+
+	handleCharity() {
+		this.setState({showCharity: true});
+		this.setState({showHome: false, showAbout: false, showTerms: false});
+		this.setState({valueSingle: '4'})
+	}
+
+	handleChangeSingle = (event, value) => {
+		this.setState({
+			valueSingle: value,
+		});
+		console.log('changed to: ' + value);
+	};
+
+	handleOpenMenu = () => {
+		this.setState({
+			openMenu: true,
+		});
 	}
 
 	componentWillMount() {
-		var self = this
-		const contract = require('truffle-contract')
-		var myToken = contract(EntboxContract) //contract ABI(Token);
-		var web3;
-
 		injectTapEventPlugin(); //Material-UI
-
-		if (typeof web3 !== 'undefined') {
-			//const provider = new Web3.providers.HttpProvider('http://localhost:8444')
-			web3 = new Web3(web3.currentProvider);
-			myToken.setProvider(web3);
-		} else {
-			console.log('No web3? You should consider trying MetaMask!')
-			//const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8444"));
-			const provider = new Web3.providers.HttpProvider('http://localhost:8444');
-			myToken.setProvider(provider);
-			web3 = new Web3(provider);
-		}
-		
-		//var account = web3.personal.listAccounts[0];
-		//web3.personal.unlockAccount(account,"password",15000); // unlock for a long time
-
-		var myTokenInstance
-		var tokenAddress
-
-		// Get accounts.
-		web3.eth.getAccounts(function(error, accounts) {
-			self.setState({userAddress: accounts[0]});
-			myToken.deployed().then(function(instance) {
-			myTokenInstance = instance
-			return myTokenInstance.balanceOf(accounts[0])
-			}).then(function(result) {
-				tokenAddress = myTokenInstance.address;
-				self.setState({address: tokenAddress});
-				var myUserBalance = web3.eth.getBalance(accounts[0]);
-				self.setState({userBalance: web3.fromWei(myUserBalance.toNumber(), "ether")});
-				//let MyContract = web3.eth.contract(JSON.parse(abi));
-				//console.log('test ' + MyContract);
-			})
-		});
 	}
 
 	render() {
@@ -122,55 +102,36 @@ class App extends Component {
 		<div className="App">
 			<header>
 				<MuiThemeProvider>
-					<MyAppbar />
+					<AppBar
+				title={<span style={styles.title} className="appbarTitle">Entbox</span>}
+				onTitleTouchTap={this.handleHome}>
+			<IconMenu
+				iconButtonElement={
+					<IconButton touch={true}>
+						<MoreVertIcon style={styles.verticon} />
+					</IconButton>
+				}
+			>
+				<MenuItem onClick={this.handleAbout} value="2" primaryText="About" leftIcon={<DonutIcon/>} />
+				<MenuItem onClick={this.handleTerms} value="3" primaryText="Terms" leftIcon={<RefreshIcon/>} />
+				<MenuItem onClick={this.handleCharity} value="4" primaryText="Charities" leftIcon={<LoyaltyIcon/>} />
+			</IconMenu>
+			</AppBar>
 				</MuiThemeProvider>
 			</header>
 
 			<main className="">
-			  <div>
-				<MuiThemeProvider>
-					<Paper style={styles.paper} zDepth={3} >
-					<Tabs>
-					  <Tab label="My Funds" style={styles.headline}>
-						<div className="mui--z2">
-							<h2>My funds</h2>
-							<p>
-								The information below will show the state of your DET wallet. <br/>Click on the BUY tab to order some tokens.
-								After you have successfully transferred some Euros, you will see below how many DETs you are able to create.
-							</p>
-							<br/>
-							Token address: <strong>{this.state.address}</strong><br/>
-							My user address: <strong>{this.state.userAddress}</strong><br/>
-							My balance: <strong>Ξ {this.state.userBalance} (Ether)</strong><br/>
-							Token name: <strong>{this.state.name}</strong><br/>
-							Token symbol: <strong>{this.state.symbol}</strong><br/>
-							Total supply of DET: <strong>{this.state.totalSupply}</strong><br/>
-							<CreateToken/>
+				<div>
+					<MuiThemeProvider>
+						<div>
+							{this.state.showHome ? <Home /> : null}
+							<Paper style={styles.paper} zDepth={3} >
+								{this.state.showAbout ? <About /> : null}
+								{this.state.showTerms ? <Terms /> : null}
+								{this.state.showCharity ? <Charity /> : null}
+							</Paper>
 						</div>
-					  </Tab>
-
-					  <Tab label="Buy" style={styles.headline}>
-						<div className="mui--z2">
-							<BuyTokens/>
-						</div>
-					  </Tab>
-
-					  <Tab label="Donate" data-route="/donate" onActive={this.handleActive} style={styles.headline}>
-						<div className="mui--z2">
-							<Donate/>
-						</div>
-					  </Tab>
-
-					  <Tab label="Chat" style={styles.headline}>
-						<div className="">
-							<Chat/>
-						</div>
-					  </Tab>
-
-					</Tabs>
-					</Paper>
 					</MuiThemeProvider>
-				
 			  </div>
 			</main>
 

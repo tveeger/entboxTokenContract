@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import {List, ListItem} from 'material-ui/List';
 import EntboxContract from '../../build/contracts/EntboxContract.json';
 import Web3 from 'web3';
+import Identicon from 'react-identity-icon';
 
-const provider = new Web3.providers.HttpProvider('http://localhost:8444');
+const provider = new Web3.providers.HttpProvider('http://localhost:8545');
 const contract = require('truffle-contract')
 const entboxContract = contract(EntboxContract)
 entboxContract.setProvider(provider)
@@ -58,7 +59,7 @@ class Messages extends Component {
 					}
 					self.setState({postAmount: postAmount});
 				}
-				console.log('sp2 ' + self.state.posts[0].payload );
+				//console.log('sp2 ' + self.state.posts[0].payload );
 			});
 
 			function reqListener(e, res) {
@@ -76,7 +77,7 @@ class Messages extends Component {
 				<p>About {this.state.postAmount} found... so far</p>
 				<List>
 					{this.state.posts.map(function(item){
-						return <ListItem key={item.id} primaryText={item.payload} />
+						return <ListItem key={item.id} primaryText={item.payload}><Identicon hash={item.from} size="40" /></ListItem>
 					})}
 				</List>
 			</div>
